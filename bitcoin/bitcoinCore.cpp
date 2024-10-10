@@ -5,7 +5,6 @@
 #include <random>
 #include <string>
 #include <sstream>
-#include <iomanip>
 #include <mutex>
 #include <ctime>
 
@@ -48,9 +47,20 @@ public:
     void addBlock(const std::string& data) {
         std::lock_guard<std::mutex> lock(mtx); // Lock for thread safety
         Block newBlock(chain.size(), chain.back().hash, data);
-        chain.push_back(newBlock);
-        std::cout << "Block " << newBlock.index << " added: " << newBlock.data 
-                  << " | Hash: " << newBlock.hash << std::endl;
+        
+        // Simulate random mining success
+        int randomValue = rand() % 100; // Random number between 0 and 99
+        std::cout << "Node attempting to mine block with random value: " << randomValue << std::endl;
+
+        // Assume any random value below 50 means successful mining
+        if (randomValue < 50) {
+            std::cout << "Block mined successfully!" << std::endl;
+            chain.push_back(newBlock);
+            std::cout << "Block " << newBlock.index << " added: " << newBlock.data 
+                      << " | Hash: " << newBlock.hash << std::endl;
+        } else {
+            std::cout << "Mining failed, trying again..." << std::endl;
+        }
     }
 };
 
@@ -65,6 +75,7 @@ void nodeFunction(Blockchain& blockchain, int nodeId) {
 }
 
 int main() {
+    srand(static_cast<unsigned int>(time(0))); // Seed for random number generation
     Blockchain blockchain;
     std::vector<std::thread> nodes;
 
